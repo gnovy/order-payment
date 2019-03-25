@@ -1,0 +1,30 @@
+{
+  "name": "order-payment-backend",
+  "version": "1.0.0",
+  "description": "backend project using serverless framework",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/gnovy/order-payment.git"
+  },
+  "author": "Yern Voon Ong",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gnovy/order-payment/issues"
+  },
+  "homepage": "https://github.com/gnovy/order-payment#readme",
+  "dependencies": {
+    "aws-sdk": "^2.427.0",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "aws-sdk-mock": "^4.3.1",
+    "chai": "^4.2.0",
+    "mocha": "^6.0.2",
+    "serverless-pseudo-parameters": "^2.4.0"
+  }
+}
