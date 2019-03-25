@@ -3,6 +3,9 @@ service: order-payment
 plugins:
   - serverless-pseudo-parameters
 
+custom:
+  aws: ${file(./config.js):aws}
+
 provider:
   name: aws
   runtime: nodejs8.10
@@ -11,7 +14,7 @@ provider:
       Action:
         - dynamodb:PutItem
       Resource:
-        - arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/orders
+        - arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.aws.tableNames.orderTable}
 
 functions:
   createOrder:
@@ -22,7 +25,7 @@ resources:
     orderTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: orders
+        TableName: ${self:custom.aws.tableNames.orderTable}
         AttributeDefinitions:
           - AttributeName: orderId
             AttributeType: S
