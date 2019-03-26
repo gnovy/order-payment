@@ -21,6 +21,11 @@ provider:
 functions:
   createOrder:
     handler: handlers/orderHandler.create
+    events:
+      - http:
+          path: orders
+          method: post
+          cors: true
   onOrderCreated:
     handler: handlers/orderHandler.onOrderCreated
     events:
