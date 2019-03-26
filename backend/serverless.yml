@@ -9,16 +9,27 @@ custom:
 provider:
   name: aws
   runtime: nodejs8.10
+  region: ${self:custom.aws.region}
   iamRoleStatements:
     - Effect: Allow
       Action:
         - dynamodb:PutItem
+        - dynamodb:UpdateItem
       Resource:
         - arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:custom.aws.tableNames.orderTable}
 
 functions:
   createOrder:
     handler: handlers/orderHandler.create
+  onOrderCreated:
+    handler: handlers/orderHandler.onOrderCreated
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - orderTable
+              - StreamArn
 
 resources:
   Resources:
@@ -37,4 +48,6 @@ resources:
           - AttributeName: orderId
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
 

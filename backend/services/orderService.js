@@ -1,28 +1,21 @@
-const uuid = require("uuid");
-const numberUtil = require("../util/numberUtil");
-const config = require("../config");
-
 class OrderService {
-    constructor() {
-        this._AWS = require("aws-sdk");
-        this._DocumentClient = new this._AWS.DynamoDB.DocumentClient();
+    constructor(orderRepository, paymentService) {
+        this._paymentService = paymentService;
+        this._orderRepository = orderRepository;
     }
 
     async create(userId, unitPrice, quantity) {
-        let results = await this._DocumentClient.put({
-            TableName : config.aws().tableNames.orderTable,
-            Item: {
-                orderId: uuid.v4(),
-                userId: userId,
-                unitPrice: unitPrice,
-                quantity: quantity,
-                createdTime: new Date().getTime(),
-                authCode: numberUtil.generateRandomNumber(1, 5),
-                status: "created"
-            }
-        }).promise();
+        return await this._orderRepository.create(userId, unitPrice, quantity);
+    }
 
-        return results;
+    async onOrderCreated(userId, orderId, authCode) {
+        let status = "cancelled";
+
+        if(this._paymentService.isPaymentAuthorized(userId, orderId, authCode)){
+            status = "confirmed";
+        }
+
+        return await this._orderRepository.updateStatus(userId, orderId, status);
     }
 }
 
